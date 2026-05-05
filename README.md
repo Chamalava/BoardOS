@@ -33,7 +33,7 @@ BoardOS/
 
 ## Compilation
 
-Con PlatformIO:
+With PlatformIO:
 
 ```bash
 cd /path/to/BoardOS
@@ -68,7 +68,7 @@ GPIO:
 - `gpio vixa [count]`
 - `pwm [pin] [0-255]`
 
-Sistema:
+System:
 
 - `uname`
 - `whoami`
@@ -80,7 +80,7 @@ Sistema:
 - `reboot`
 - `neofetch`
 
-Alias y scripts:
+Aliasing and scripts:
 
 - `alias`
 - `alias [name]=[command]`
