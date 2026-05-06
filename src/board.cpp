@@ -7,12 +7,18 @@
 #include <esp_heap_caps.h>
 #endif
 
+#if BOARD_RP2040_HAS_HELPER_API
+#include <RP2040.h>
+#endif
+
 namespace {
 
 #if BOARD_ARCH_AVR
 const uint8_t demoPinsData[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 #elif BOARD_ARCH_ESP32
 const uint8_t demoPinsData[] = {4, 5, 18, 19, 21, 22, 23, 25, 26, 27, 32, 33};
+#elif BOARD_ARCH_RP2040
+const uint8_t demoPinsData[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
 #else
 const uint8_t demoPinsData[] = {2, 3, 4, 5};
 #endif
@@ -28,6 +34,12 @@ int boardFreeMemory() {
   return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval);
 #elif BOARD_ARCH_ESP32
   return (int) heap_caps_get_free_size(MALLOC_CAP_8BIT);
+#elif BOARD_ARCH_RP2040
+  #if BOARD_RP2040_HAS_HELPER_API
+  return rp2040.getFreeHeap();
+  #else
+  return -1;
+  #endif
 #else
   return -1;
 #endif
@@ -39,6 +51,12 @@ void boardRestart() {
   resetSystem();
 #elif BOARD_ARCH_ESP32
   esp_restart();
+#elif BOARD_ARCH_RP2040
+  #if BOARD_RP2040_HAS_HELPER_API
+  rp2040.reboot();
+  #else
+  NVIC_SystemReset();
+  #endif
 #endif
 }
 
@@ -55,6 +73,8 @@ const char* boardHardwareName() {
   return "Arduino UNO";
 #elif BOARD_ARCH_ESP32
   return "ESP32";
+#elif BOARD_ARCH_RP2040
+  return "Raspberry Pi Pico";
 #else
   return "Unknown";
 #endif
@@ -65,6 +85,8 @@ const char* boardArchName() {
   return "AVR";
 #elif BOARD_ARCH_ESP32
   return "ESP32";
+#elif BOARD_ARCH_RP2040
+  return "RP2040";
 #else
   return "Unknown";
 #endif

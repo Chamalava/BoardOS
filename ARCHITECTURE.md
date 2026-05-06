@@ -2,6 +2,12 @@
 
 This document summarizes how the project is divided and what responsibility each module has.
 
+Supported boards in the current PlatformIO configuration:
+
+- Arduino UNO (`env:uno`)
+- ESP32 Dev Module (`env:esp32dev`)
+- Raspberry Pi Pico (`env:pico`, Earle Philhower Arduino-Pico core)
+
 ## Overview
 
 ```text

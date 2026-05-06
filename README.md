@@ -1,6 +1,6 @@
 # BoardOS
 
-BoardOS is a command interpreter for Arduino- and ESP32-compatible boards (more boards coming soon), with a RAM filesystem, basic system utilities, and simple GPIO control from the serial monitor, using the PlatformIO template as a base.
+BoardOS is a command interpreter for Arduino UNO, ESP32, and Raspberry Pi Pico boards (more boards coming soon), with a RAM filesystem, basic system utilities, and simple GPIO control from the serial monitor, using the PlatformIO template as a base.
 
 ## Structure
 
@@ -37,10 +37,16 @@ Con PlatformIO:
 
 ```bash
 cd /path/to/BoardOS
-platformio run
-platformio upload
-platformio monitor
+platformio run -e uno
+platformio upload -e uno
+platformio monitor -e uno
 ```
+
+Available environments:
+
+- `uno`
+- `esp32dev`
+- `pico` (Earle Philhower Arduino-Pico core)
 
 In VS Code you can also compile and upload with the `PlatformIO IDE` extension.
 
@@ -102,21 +108,54 @@ The main limits are in `include/config.h`:
 
 ## Example
 
+These examples match the current shell limits: short file names, short commands, and `echo` redirection written without quotes.
+
+Arduino UNO built-in LED on pin `13`:
+
 ```text
-root@arduino:/# mkdir home
+root@arduino:/# touch uno.sh
 OK.
-root@arduino:/# cd home
-root@arduino:/home/# touch script.sh
-OK.
-root@arduino:/home/# echo "gpio 13 on; gpio 13 off" > script.sh
+root@arduino:/# echo gpio 13 on > uno.sh
 Saved.
-root@arduino:/home/# sh script.sh
+root@arduino:/# sh uno.sh
 [sh:1] gpio 13 on
 GPIO 13 ON
-[sh:2] gpio 13 off
-GPIO 13 OFF
 Script finished.
 ```
+
+ESP32 built-in LED on pin `2`:
+
+```text
+root@arduino:/# touch esp.sh
+OK.
+root@arduino:/# echo gpio 2 on > esp.sh
+Saved.
+root@arduino:/# sh esp.sh
+[sh:1] gpio 2 on
+GPIO 2 ON
+Script finished.
+```
+
+Raspberry Pi Pico built-in LED on pin `25`:
+
+```text
+root@arduino:/# touch pico.sh
+OK.
+root@arduino:/# echo gpio 25 on > pico.sh
+Saved.
+root@arduino:/# sh pico.sh
+[sh:1] gpio 25 on
+GPIO 25 ON
+Script finished.
+```
+
+## Built-in LED Pins
+
+Use these pins if you want to blink the LED already soldered on the board PCB:
+
+- Arduino UNO: `13`
+- ESP32 (`esp32dev`): `2`
+- Raspberry Pi Pico (`pico`): `25`
 
 ## Notes
 
@@ -124,6 +163,9 @@ Script finished.
 - Data is lost when the board restarts.
 - The current limit is 10 entries in the filesystem.
 - The current limit is 4 aliases.
+- The `pico` environment uses the Earle Philhower Arduino-Pico core through PlatformIO core switching.
+- On Raspberry Pi Pico with that core, `free` and `df` use `rp2040.getFreeHeap()` to report free heap bytes.
+- For `esp32dev`, many boards use the onboard LED on GPIO `2`, but some ESP32 board variants may wire the PCB LED differently.
 
 ## Future features
 
