@@ -11,10 +11,7 @@
 #define BOARD_OS_NAME "BoardOS"
 #define BOARD_OS_VERSION "1.0.6"
 
-#if BOARD_ARCH_AVR
-#define BOARD_HARDWARE "Arduino UNO"
-#define BOARD_ARCH BOARD_ARCH_NAME
-#elif BOARD_ARCH_ESP32
+#if BOARD_ARCH_ESP32
 #define BOARD_HARDWARE "ESP32"
 #define BOARD_ARCH BOARD_ARCH_NAME
 #elif BOARD_ARCH_RP2040
@@ -26,21 +23,21 @@
 #endif
 
 // Memory configuration - Filesystem
-#define MAX_FILES 10         
-#define NAME_LEN 12         
-#define CONTENT_LEN 32      
-#define PATH_LEN 16         
+#define MAX_FILES 20       
+#define NAME_LEN 16
+#define CONTENT_LEN 160
+#define PATH_LEN 32
 
 // Dmesg configuration (kernel logs)
 #define DMESG_LINES 6
-#define DMESG_LEN 40
+#define DMESG_LEN 64
 
 // Alias configuration
 #define MAX_ALIASES 4
-#define ALIAS_NAME_LEN 6
-#define ALIAS_VAL_LEN 20
+#define ALIAS_NAME_LEN 12
+#define ALIAS_VAL_LEN 64
 
 // Input buffer configuration
-#define INPUT_BUFFER_SIZE 32
+#define INPUT_BUFFER_SIZE 128
 
 #endif

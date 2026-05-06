@@ -3,5 +3,6 @@
 .rmv/
 .agents/
 .codex/
+.venv/
 temp/
 screenshots/

@@ -16,6 +16,7 @@ extern int dmesgIndex;
 // Dmesg functions
 void addDmesg(const __FlashStringHelper* msg);
 void addDmesgRam(const char* msg);
+void addDmesgTagged(const char* tag, const char* msg);
 void printDmesg();
 void clearDmesg();
 

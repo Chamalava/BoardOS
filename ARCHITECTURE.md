@@ -16,16 +16,21 @@ BoardOS/
 ├── README.md
 ├── ARCHITECTURE.md
 ├── include/
+│   ├── board.h
+│   ├── compat.h
 │   ├── config.h
 │   ├── filesystem.h
 │   ├── dmesg.h
 │   ├── aliases.h
+│   ├── storage.h
 │   └── utils.h
 └── src/
+    ├── board.cpp
     ├── main.cpp
     ├── filesystem.cpp
     ├── dmesg.cpp
     ├── aliases.cpp
+    ├── storage.cpp
     ├── utils.cpp
     └── README.md
 ```
@@ -49,8 +54,11 @@ They implement a simple RAM filesystem. Each entry uses the `RAMFile` structure,
 Responsibilities:
 
 - initialize `/home` and `/dev`
+- create board-aware `/dev/pinNN` device files
 - create and delete entries
+- write file contents and read them back
 - search for files by name and directory
+- change directories including `..`
 - list the contents of a directory
 
 ### `include/dmesg.h` y `src/dmesg.cpp`
@@ -84,6 +92,31 @@ Responsibilities:
 - expose the reset pointer
 - basic conversions between string and integer
 
+### `include/board.h` y `src/board.cpp`
+
+They abstract board-specific details so the rest of the firmware can stay portable.
+
+Responsibilities:
+
+- report hardware and architecture names
+- report free memory and restart the board
+- expose the built-in LED pin for each target
+- expose a short list of demo GPIO pins
+
+### `include/storage.h` y `src/storage.cpp`
+
+They provide the persistent storage backend used by BoardOS state.
+
+Responsibilities:
+
+- save and restore filesystem entries
+- save and restore aliases
+- save and restore the current path
+- switch backend depending on board target:
+  UNO -> EEPROM
+  ESP32 -> Preferences/NVS
+  Pico -> EEPROM emulation on flash
+
 ### `src/main.cpp`
 
 It is the input and coordination layer.
@@ -91,25 +124,32 @@ It is the input and coordination layer.
 Responsibilities:
 
 - initialize serial, filesystem, and aliases
-- read commands from the serial monitor
+- read commands from the serial monitor with input overflow handling
 - split the command and arguments
+- dispatch commands through a command table
 - execute filesystem, GPIO, and system operations
+- resolve aliases
+- drive the integrated serial editor
 - interpret scripts with `sh`
 
 ## Dependency flow
 
 ```text
 main.cpp
+├── board.h
 ├── config.h
 ├── filesystem.h
 ├── dmesg.h
 ├── aliases.h
+├── storage.h
 └── utils.h
 
-filesystem.cpp -> filesystem.h, dmesg.h
+filesystem.cpp -> filesystem.h, board.h, dmesg.h
 dmesg.cpp      -> dmesg.h
 aliases.cpp    -> aliases.h, dmesg.h
-utils.cpp      -> utils.h
+board.cpp      -> board.h, compat.h
+storage.cpp    -> storage.h, filesystem.h, aliases.h, compat.h
+utils.cpp      -> utils.h, board.h
 ```
 
 `main.cpp` depends on all modules because it concentrates the command interface.
